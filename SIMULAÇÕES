@@ -1,0 +1,514 @@
+clc;
+clear;
+close all;
+
+%FFT DE UMA SENOIDE DISCRETA;
+
+% Numero de amostras
+N = 128;
+
+% Frequencia normalizada da senoide
+f0 = 0.1;
+
+% Vetor de amostras
+n = 0:N-1;
+
+% Geracao da senoide discreta
+x = sin(2*pi*f0*n);
+
+% Plot do sinal no dominio do tempo
+figure;
+
+subplot(2,1,1);
+
+stem(n,x);
+
+title('Sinal no Dominio do Tempo');
+
+xlabel('Amostras');
+
+ylabel('Amplitude');
+
+grid on;
+
+% Calculo da FFT
+X = fft(x);
+
+% Vetor de frequencia normalizada
+f = (0:N-1)/N;
+
+% Plot do espectro
+subplot(2,1,2);
+
+plot(f,abs(X));
+
+title('Espectro do Sinal');
+
+xlabel('Frequencia Normalizada');
+
+ylabel('|X(f)|');
+
+grid on;
+
+
+clc;
+clear;
+close all;
+
+% SOMA DE DUAS SENOIDES;
+
+% Numero de amostras
+N = 256;
+
+% Vetor de amostras
+n = 0:N-1;
+
+% Frequencias das senoides
+f1 = 0.1;
+f2 = 0.3;
+
+% Geracao das senoides
+x1 = sin(2*pi*f1*n);
+
+x2 = sin(2*pi*f2*n);
+
+% Soma dos sinais
+x = x1 + x2;
+
+% Plot no dominio do tempo
+figure;
+
+subplot(2,1,1);
+
+plot(n,x);
+
+title('Sinal Composto no Dominio do Tempo');
+
+xlabel('Amostras');
+
+ylabel('Amplitude');
+
+grid on;
+
+% FFT do sinal composto
+X = fft(x);
+
+% Vetor de frequencia
+f = (0:N-1)/N;
+
+% Plot do espectro
+subplot(2,1,2);
+
+plot(f,abs(X));
+
+title('Espectro do Sinal');
+
+xlabel('Frequencia');
+
+ylabel('|X(f)|');
+
+grid on;
+
+clc;
+clear;
+close all;
+
+%ALIASING
+
+% Frequencia do sinal
+f0 = 200;
+
+% Taxa de amostragem adequada
+fs1 = 1000;
+
+% Taxa de amostragem insuficiente
+fs2 = 150;
+
+% Vetores de tempo
+t1 = 0:1/fs1:1;
+
+t2 = 0:1/fs2:1;
+
+% Geracao do sinal
+x1 = sin(2*pi*f0*t1);
+
+x2 = sin(2*pi*f0*t2);
+
+% FFT dos sinais
+X1 = fft(x1);
+
+X2 = fft(x2);
+
+% Comprimento dos sinais
+N1 = length(X1);
+
+N2 = length(X2);
+
+% Vetores de frequencia
+f1 = (0:N1-1)*(fs1/N1);
+
+f2 = (0:N2-1)*(fs2/N2);
+
+% Plot dos espectros
+figure;
+
+subplot(2,1,1);
+
+plot(f1,abs(X1));
+
+title('Espectro Sem Aliasing');
+
+xlabel('Frequencia (Hz)');
+
+ylabel('|X(f)|');
+
+grid on;
+
+subplot(2,1,2);
+
+plot(f2,abs(X2));
+
+title('Espectro Com Aliasing');
+
+xlabel('Frequencia (Hz)');
+
+ylabel('|X(f)|');
+
+grid on;
+
+clc;
+clear;
+close all;
+
+%JANELAMENTO;
+
+% Numero de amostras
+N = 128;
+
+% Vetor de amostras
+n = 0:N-1;
+
+% Geracao da senoide
+x = sin(2*pi*0.12*n);
+
+% FFT sem janela
+X1 = fft(x);
+
+% Aplicacao da janela de Hamming
+janela = hamming(N)';
+
+xj = x .* janela;
+
+% FFT com janela
+X2 = fft(xj);
+
+% Vetor de frequencia
+f = (0:N-1)/N;
+
+% Plot dos espectros
+figure;
+
+subplot(2,1,1);
+
+plot(f,abs(X1));
+
+title('FFT Sem Janelamento');
+
+xlabel('Frequencia');
+
+ylabel('|X(f)|');
+
+grid on;
+
+subplot(2,1,2);
+
+plot(f,abs(X2));
+
+title('FFT Com Janela de Hamming');
+
+xlabel('Frequencia');
+
+ylabel('|X(f)|');
+
+grid on;
+
+clc;
+clear;
+close all;
+
+% SINAL COM RUIDO;
+
+% Numero de amostras
+N = 256;
+
+% Vetor de amostras
+n = 0:N-1;
+
+% Sinal senoidal
+x = sin(2*pi*0.15*n);
+
+% Geracao de ruido gaussiano
+ruido = 0.5*randn(1,N);
+
+% Sinal com ruido
+sinal = x + ruido;
+
+% FFT do sinal
+X = fft(sinal);
+
+% Vetor de frequencia
+f = (0:N-1)/N;
+
+% Plot dos resultados
+figure;
+
+subplot(2,1,1);
+
+plot(n,sinal);
+
+title('Sinal com Ruido');
+
+xlabel('Amostras');
+
+ylabel('Amplitude');
+
+grid on;
+
+subplot(2,1,2);
+
+plot(f,abs(X));
+
+title('Espectro do Sinal');
+
+xlabel('Frequencia');
+
+ylabel('|X(f)|');
+
+grid on;
+
+
+clc;
+clear;
+close all;
+
+% IMPLEMENTAÇÃO MANUAL DA DFT;
+
+% Vetor do sinal
+x = [1 2 3 4];
+
+% Numero de amostras
+N = length(x);
+
+% Inicializacao do vetor da DFT
+X = zeros(1,N);
+
+% Implementacao direta da DFT
+for k = 0:N-1
+    
+    for n = 0:N-1
+        
+        X(k+1) = X(k+1) + x(n+1)*exp(-1j*2*pi*k*n/N);
+        
+    end
+    
+end
+
+% FFT utilizando funcao pronta
+X_fft = fft(x);
+
+% Exibicao dos resultados
+disp('Resultado da DFT Manual');
+
+disp(X);
+
+disp('Resultado da FFT');
+
+disp(X_fft);
+
+
+clc;
+clear;
+close all;
+
+% RESPOSTA DE IMPULSO E ESTABILIDADE
+
+% Numerador da funcao de transferencia
+b = [1];
+
+% Denominador da funcao de transferencia
+a = [1 -0.8];
+
+% Resposta ao impulso
+figure;
+
+impz(b,a);
+
+title('Resposta ao Impulso do Sistema');
+
+grid on;
+
+
+clc;
+clear;
+close all;
+
+% RESOLUÇÃO ESPECTRAL;
+
+% Quantidade de amostras
+N1 = 64;
+N2 = 512;
+
+% Vetores de amostras
+n1 = 0:N1-1;
+n2 = 0:N2-1;
+
+% Frequencia do sinal
+f0 = 0.2;
+
+% Geracao dos sinais
+x1 = sin(2*pi*f0*n1);
+
+x2 = sin(2*pi*f0*n2);
+
+% FFT dos sinais
+X1 = fft(x1);
+
+X2 = fft(x2);
+
+% Vetores de frequencia
+f1 = (0:N1-1)/N1;
+
+f2 = (0:N2-1)/N2;
+
+% Plot dos espectros
+figure;
+
+subplot(2,1,1);
+
+plot(f1,abs(X1));
+
+title('Resolucao Espectral com N = 64');
+
+xlabel('Frequencia');
+
+ylabel('|X(f)|');
+
+grid on;
+
+subplot(2,1,2);
+
+plot(f2,abs(X2));
+
+title('Resolucao Espectral com N = 512');
+
+xlabel('Frequencia');
+
+ylabel('|X(f)|');
+
+grid on;
+
+clc;
+clear;
+close all;
+
+% IDENTIFICAÇÃO DE HARMONICOS; 
+
+% Numero de amostras
+N = 256;
+
+% Vetor de amostras
+n = 0:N-1;
+
+% Frequencia fundamental
+f1 = 0.1;
+
+% Frequencia harmonica
+f2 = 0.2;
+
+% Geracao do sinal
+x = sin(2*pi*f1*n) + 0.5*sin(2*pi*f2*n);
+
+% FFT do sinal
+X = fft(x);
+
+% Vetor de frequencia
+f = (0:N-1)/N;
+
+% Plot dos resultados
+figure;
+
+subplot(2,1,1);
+
+plot(n,x);
+
+title('Sinal no Dominio do Tempo');
+
+xlabel('Amostras');
+
+ylabel('Amplitude');
+
+grid on;
+
+subplot(2,1,2);
+
+plot(f,abs(X));
+
+title('Espectro com Harmônicos');
+
+xlabel('Frequencia');
+
+ylabel('|X(f)|');
+
+grid on;
+
+
+clc;
+clear;
+close all;
+
+% ANÁLISE ESPECTRAL DE SINAL REAL;
+
+% Frequencia de amostragem
+fs = 1000;
+
+% Vetor de tempo
+t = 0:1/fs:1;
+
+% Sinal senoidal com ruido
+x = sin(2*pi*50*t) + 0.5*randn(size(t));
+
+% FFT do sinal
+X = fft(x);
+
+% Numero de pontos
+N = length(X);
+
+% Vetor de frequencia
+f = (0:N-1)*(fs/N);
+
+% Plot dos resultados
+figure;
+
+subplot(2,1,1);
+
+plot(t,x);
+
+title('Sinal no Dominio do Tempo');
+
+xlabel('Tempo (s)');
+
+ylabel('Amplitude');
+
+grid on;
+
+subplot(2,1,2);
+
+plot(f,abs(X));
+
+title('Espectro do Sinal');
+
+xlabel('Frequencia (Hz)');
+
+ylabel('|X(f)|');
+
+grid on;
